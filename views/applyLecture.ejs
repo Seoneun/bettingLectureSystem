@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="EUC-KR">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/applyLecture.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/9f3494161b.js" crossorigin="anonymous"></script>
+    <script src="js/applyLecture.js" defer></script>
+    <title>수강신청 시스템</title>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar_logo">
+            <i class="fas fa-graduation-cap"></i>
+            <a href="home_">수강신청 시스템</a>
+        </div>
+
+        <ul class="navbar_menu">
+            <li><a href="timeTable">종합시간표 조회</a></li>
+            <li><a href="appliedLecture">수강신청내역</a></li>
+            <li><a href="applyLecture">수강신청</a></li>            
+        </ul>
+
+        <ul class="navbar_user">
+            <li><a href="#" id="user_info"></a></li>
+            <li><a href="home">로그아웃</a></li>
+        </ul>
+
+        <a href="#" class="navbar_toggleBtn">
+            <i class="fas fa-bars"></i>
+        </a>
+    </nav>
+    <div class="remain_points"></div>
+    <div class="time_table">
+        <form class="search_table" action="search_lecture_" method="POST">
+            <label>과목명</label>
+            <input type="text" name="lecture_name" id="lecture_name_input">
+            <label>학수번호</label>
+            <input type="text" name="lecture_id" id="lecture_id_input">
+            <button class="search_lecture_btn">검색</button>
+        </form>
+        <div class="lecture_table">
+            <ul class="lecture_table_header">
+                <li class="lecture_table_header_1">학수번호</li>
+                <li class="lecture_table_header_2">과목명</li>
+                <li class="lecture_table_header_3">정원</li>
+                <li class="lecture_table_header_4">베팅 금액</li>
+            </ul>
+            <% for(let j = 0; j< Object.keys(lecture_table).length; j++){%>
+            <ul class="lecture_table_body">
+                <li class="lecture_table_header_1"><%= lecture_table[j].lecture_id %></li>
+                <li class="lecture_table_header_2"><%= lecture_table[j].lecture_name %></li>
+                <li class="lecture_table_header_3"><%= lecture_table[j].capacity %></li>
+                <form action="apply_lecture_<%= lecture_table[j].lecture_id %>" method="POST" style="display: flex; justify-content: center; align-items: center; width: 100%;">
+                    <li class="lecture_table_header_4"><input type="number" name="betting_cost"><button>신청</button></li>
+                </form>
+            </ul>
+            <%}%>
+        </div>
+    </div>
+</body>
+</html>

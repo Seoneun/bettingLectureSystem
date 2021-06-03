@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="css/register.css">
+    <script src="js/register.js" defer></script>
+    <title>회원가입</title>
+</head>
+<body>
+   <div class="container">
+       <div class="header">
+           <h2>회원가입</h2>
+       </div>
+       <form class="form" id="form" method="POST" action="sign_up">
+           <div class="form-control">
+               <label>이름</label>
+               <input type="text" placeholder="홍길동" id="username" name="userName">
+                <i class="fas fa-check-circle"></i>
+                <i class="fas fa-exclamation-circle"></i>
+                <small>Error messsage</small>
+           </div>
+
+            <div class="form-control">
+                <label>이메일</label>
+                <input type="email" placeholder="student@khu.ac.kr" id="email" name="userEmail">
+                <i class="fas fa-check-circle"></i>
+                <i class="fas fa-exclamation-circle"></i>
+                <small>Error messsage</small>
+            </div>
+
+            <div class="form-control">
+                <label>비밀번호</label>
+                <input type="password" placeholder="Password" id="password" name="password">
+                <i class="fas fa-check-circle"></i>
+                <i class="fas fa-exclamation-circle"></i>
+                <small>Error messsage</small>
+            </div>
+
+            <div class="form-control">
+                <label>비밀번호 확인</label>
+                <input type="password" placeholder="Password" id="password2">
+                <i class="fas fa-check-circle"></i>
+                <i class="fas fa-exclamation-circle"></i>
+                <small>Error messsage</small>
+            </div>
+            <button type="submit" id="registerBtn">완료</button>
+       </form>
+   </div>
+</body>
+</html>
