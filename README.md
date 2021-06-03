@@ -1,6 +1,6 @@
 # bettingLectureSystem
 베팅을 통한 수강신청 시스템
 
-platform: node.js
+<s>platform: node.js<s>
 framework: express
 DB: mySQL, Sequelize
