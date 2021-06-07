@@ -6,11 +6,11 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
             isEmail: true
         },
-        //primaryKey: true
+        primaryKey: true
         },
       lecture_id: {
         type: DataTypes.STRING(20),
-        //primaryKey: true,
+        primaryKey: true,
         allowNull: false,
         //unique: true,
       },

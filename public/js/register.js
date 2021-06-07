@@ -6,13 +6,12 @@ const password2 = document.getElementById('password2');
 
 
 form.addEventListener('submit', (e) => {
-    //e.preventDefault();
-
-    checkInputs();
+    checkInputs(e);
+    console.log(100);
 });
 
 
-function checkInputs() {
+function checkInputs(e) {
     // get the values from the inputs
     const usernameValue = username.value.trim();
     const emailValue = email.value.trim();
@@ -21,28 +20,34 @@ function checkInputs() {
 
     if(usernameValue === '') {
         setErrorFor(username, 'Username cannot be blank');
+        e.preventDefault();
     } else {
         setSuccessFor(username);
     }
 
     if(emailValue === '') {
         setErrorFor(email, 'Email cannot be blank');
+        e.preventDefault();
     } else if(!isEmail(emailValue)) {
         setErrorFor(email, 'Email is not valid');
+        e.preventDefault();
     } else {
         setSuccessFor(email);
     }
 
     if(passwordValue === '') {
         setErrorFor(password, 'Password cannot be blank');
+        e.preventDefault();
     } else {
         setSuccessFor(password);
     }
 
     if(password2Value === '') {
         setErrorFor(password2, 'Password2 cannot be blank');
+        e.preventDefault();
     } else if(passwordValue !== password2Value) {
         setErrorFor(password2, 'Passwords does not match');
+        e.preventDefault();
     }
     else {
         setSuccessFor(password2);

@@ -91,7 +91,7 @@ module.exports = async function(app)
 
     app.post("/search_lecture", async function(req,res) {
         let body = req.body;
-        const { Op, where, col, where, where } = require("sequelize");
+        const { Op } = require("sequelize");
         await models.Lecture.findAll({
           where: {
             [Op.or]: [
@@ -119,6 +119,21 @@ module.exports = async function(app)
       })
   });
 
+  app.post("/search_lecture__", async function(req,res) {
+    let body = req.body;
+    const { Op } = require("sequelize");
+    await models.BettingLecture.findAll({
+      where: {
+        email: decodeURIComponent(req.cookies.user_email),
+        [Op.or]: [
+          {lecture_id: body.lecture_id},
+        ]
+      }
+    }).then(betting_lecture_table => {
+      res.render('appliedLecture.ejs', {betting_lecture_table});
+    })
+});
+
   /*for(i = 0; i < length_lecture; i++) {
     app.post('/apply_lecture_' + lecture_ids[i].dataValues.lecture_id, function(req, res) {
       console.log(lecture_ids);
@@ -140,182 +155,269 @@ module.exports = async function(app)
 
     app.post('/apply_lecture_' + lecture_ids[0].dataValues.lecture_id, async function(req, res) {
       let body = req.body;
-      models.BettingLecture.create({
-        email: decodeURIComponent(req.cookies.user_email),
-        lecture_id: lecture_ids[0].dataValues.lecture_id,
-        betting_points: body.betting_cost
-      });
-      models.User.update(
-        {points: req.cookies.points-body.betting_cost},
-        {where: {email: decodeURIComponent(req.cookies.user_email)}}
-        );
-        res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
-        res.redirect("/applyLecture");
+      if(Number(req.cookies.points) >= Number(body.betting_cost)) {
+        models.BettingLecture.create({
+          email: decodeURIComponent(req.cookies.user_email),
+          lecture_id: lecture_ids[0].dataValues.lecture_id,
+          betting_points: body.betting_cost
+        }).then(() => {
+          models.User.update(
+            {points: req.cookies.points-body.betting_cost},
+            {where: {email: decodeURIComponent(req.cookies.user_email)}}
+            );
+            res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
+            res.redirect("/applyLecture");
+        }).catch(err => {
+          console.log(err);
+          res.send('<script type="text/javascript">alert("이미 베팅한 강의입니다!");</script>');
+        })
+      } else {
+        res.send('<script type="text/javascript">alert("베팅 한도를 초과했습니다!");</script>');
+      }
     });
-
     app.post('/apply_lecture_' + lecture_ids[1].dataValues.lecture_id, async function(req, res) {
       let body = req.body;
-      models.BettingLecture.create({
-        email: decodeURIComponent(req.cookies.user_email),
-        lecture_id: lecture_ids[1].dataValues.lecture_id,
-        betting_points: body.betting_cost
-      });
-      models.User.update(
-        {points: req.cookies.points-body.betting_cost},
-        {where: {email: decodeURIComponent(req.cookies.user_email)}}
-        );
-      res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
-      res.redirect("/applyLecture");
+      if(Number(req.cookies.points) >= Number(body.betting_cost)) {
+        models.BettingLecture.create({
+          email: decodeURIComponent(req.cookies.user_email),
+          lecture_id: lecture_ids[1].dataValues.lecture_id,
+          betting_points: body.betting_cost
+        }).then(() => {
+          models.User.update(
+            {points: req.cookies.points-body.betting_cost},
+            {where: {email: decodeURIComponent(req.cookies.user_email)}}
+            );
+            res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
+            res.redirect("/applyLecture");
+        }).catch(err => {
+          console.log(err);
+          res.send('<script type="text/javascript">alert("이미 베팅한 강의입니다!");</script>');
+        })
+      } else {
+        console.log(req.cookies.points);
+        console.log(body.betting_cost);
+        res.send('<script type="text/javascript">alert("베팅 한도를 초과했습니다!");</script>');
+      }
     });
-
     app.post('/apply_lecture_' + lecture_ids[2].dataValues.lecture_id, async function(req, res) {
       let body = req.body;
-      models.BettingLecture.create({
-        email: decodeURIComponent(req.cookies.user_email),
-        lecture_id: lecture_ids[2].dataValues.lecture_id,
-        betting_points: body.betting_cost
-      });
-      models.User.update(
-        {points: req.cookies.points-body.betting_cost},
-        {where: {email: decodeURIComponent(req.cookies.user_email)}}
-        );
-      res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
-      res.redirect("/applyLecture");
+      if(Number(req.cookies.points) >= Number(body.betting_cost)) {
+        models.BettingLecture.create({
+          email: decodeURIComponent(req.cookies.user_email),
+          lecture_id: lecture_ids[2].dataValues.lecture_id,
+          betting_points: body.betting_cost
+        }).then(() => {
+          models.User.update(
+            {points: req.cookies.points-body.betting_cost},
+            {where: {email: decodeURIComponent(req.cookies.user_email)}}
+            );
+            res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
+            res.redirect("/applyLecture");
+        }).catch(err => {
+          console.log(err);
+          res.send('<script type="text/javascript">alert("이미 베팅한 강의입니다!");</script>');
+        })
+      } else {
+        res.send('<script type="text/javascript">alert("베팅 한도를 초과했습니다!");</script>');
+      }
     });
-
     app.post('/apply_lecture_' + lecture_ids[3].dataValues.lecture_id, async function(req, res) {
       let body = req.body;
-      models.BettingLecture.create({
-        email: decodeURIComponent(req.cookies.user_email),
-        lecture_id: lecture_ids[3].dataValues.lecture_id,
-        betting_points: body.betting_cost
-      });
-      models.User.update(
-        {points: req.cookies.points-body.betting_cost},
-        {where: {email: decodeURIComponent(req.cookies.user_email)}}
-        );
-      res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
-      res.redirect("/applyLecture");
+      if(Number(req.cookies.points) >= Number(body.betting_cost)) {
+        models.BettingLecture.create({
+          email: decodeURIComponent(req.cookies.user_email),
+          lecture_id: lecture_ids[3].dataValues.lecture_id,
+          betting_points: body.betting_cost
+        }).then(() => {
+          models.User.update(
+            {points: req.cookies.points-body.betting_cost},
+            {where: {email: decodeURIComponent(req.cookies.user_email)}}
+            );
+            res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
+            res.redirect("/applyLecture");
+        }).catch(err => {
+          console.log(err);
+          res.send('<script type="text/javascript">alert("이미 베팅한 강의입니다!");</script>');
+        })
+      } else {
+        res.send('<script type="text/javascript">alert("베팅 한도를 초과했습니다!");</script>');
+      }
     });
-
     app.post('/apply_lecture_' + lecture_ids[4].dataValues.lecture_id, async function(req, res) {
       let body = req.body;
-      models.BettingLecture.create({
-        email: decodeURIComponent(req.cookies.user_email),
-        lecture_id: lecture_ids[4].dataValues.lecture_id,
-        betting_points: body.betting_cost
-      });
-      models.User.update(
-        {points: req.cookies.points-body.betting_cost},
-        {where: {email: decodeURIComponent(req.cookies.user_email)}}
-        );
-      res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
-      res.redirect("/applyLecture");
+      if(Number(req.cookies.points) >= Number(body.betting_cost)) {
+        models.BettingLecture.create({
+          email: decodeURIComponent(req.cookies.user_email),
+          lecture_id: lecture_ids[4].dataValues.lecture_id,
+          betting_points: body.betting_cost
+        }).then(() => {
+          models.User.update(
+            {points: req.cookies.points-body.betting_cost},
+            {where: {email: decodeURIComponent(req.cookies.user_email)}}
+            );
+            res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
+            res.redirect("/applyLecture");
+        }).catch(err => {
+          console.log(err);
+          res.send('<script type="text/javascript">alert("이미 베팅한 강의입니다!");</script>');
+        })
+      } else {
+        res.send('<script type="text/javascript">alert("베팅 한도를 초과했습니다!");</script>');
+      }
     });
-
     app.post('/apply_lecture_' + lecture_ids[5].dataValues.lecture_id, async function(req, res) {
       let body = req.body;
-      models.BettingLecture.create({
-        email: decodeURIComponent(req.cookies.user_email),
-        lecture_id: lecture_ids[5].dataValues.lecture_id,
-        betting_points: body.betting_cost
-      });
-      models.User.update(
-        {points: req.cookies.points-body.betting_cost},
-        {where: {email: decodeURIComponent(req.cookies.user_email)}}
-        );
-      res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
-      res.redirect("/applyLecture");
+      if(Number(req.cookies.points) >= Number(body.betting_cost)) {
+        models.BettingLecture.create({
+          email: decodeURIComponent(req.cookies.user_email),
+          lecture_id: lecture_ids[5].dataValues.lecture_id,
+          betting_points: body.betting_cost
+        }).then(() => {
+          models.User.update(
+            {points: req.cookies.points-body.betting_cost},
+            {where: {email: decodeURIComponent(req.cookies.user_email)}}
+            );
+            res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
+            res.redirect("/applyLecture");
+        }).catch(err => {
+          console.log(err);
+          res.send('<script type="text/javascript">alert("이미 베팅한 강의입니다!");</script>');
+        })
+      } else {
+        res.send('<script type="text/javascript">alert("베팅 한도를 초과했습니다!");</script>');
+      }
     });
-
     app.post('/apply_lecture_' + lecture_ids[6].dataValues.lecture_id, async function(req, res) {
       let body = req.body;
-      models.BettingLecture.create({
-        email: decodeURIComponent(req.cookies.user_email),
-        lecture_id: lecture_ids[6].dataValues.lecture_id,
-        betting_points: body.betting_cost
-      });
-      models.User.update(
-        {points: req.cookies.points-body.betting_cost},
-        {where: {email: decodeURIComponent(req.cookies.user_email)}}
-        );
-      res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
-      res.redirect("/applyLecture");
+      if(Number(req.cookies.points) >= Number(body.betting_cost)) {
+        models.BettingLecture.create({
+          email: decodeURIComponent(req.cookies.user_email),
+          lecture_id: lecture_ids[6].dataValues.lecture_id,
+          betting_points: body.betting_cost
+        }).then(() => {
+          models.User.update(
+            {points: req.cookies.points-body.betting_cost},
+            {where: {email: decodeURIComponent(req.cookies.user_email)}}
+            );
+            res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
+            res.redirect("/applyLecture");
+        }).catch(err => {
+          console.log(err);
+          res.send('<script type="text/javascript">alert("이미 베팅한 강의입니다!");</script>');
+        })
+      } else {
+        res.send('<script type="text/javascript">alert("베팅 한도를 초과했습니다!");</script>');
+      }
     });
-
     app.post('/apply_lecture_' + lecture_ids[7].dataValues.lecture_id, async function(req, res) {
       let body = req.body;
-      models.BettingLecture.create({
-        email: decodeURIComponent(req.cookies.user_email),
-        lecture_id: lecture_ids[7].dataValues.lecture_id,
-        betting_points: body.betting_cost
-      });
-      models.User.update(
-        {points: req.cookies.points-body.betting_cost},
-        {where: {email: decodeURIComponent(req.cookies.user_email)}}
-        );
-      res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
-      res.redirect("/applyLecture");
+      if(Number(req.cookies.points) >= Number(body.betting_cost)) {
+        models.BettingLecture.create({
+          email: decodeURIComponent(req.cookies.user_email),
+          lecture_id: lecture_ids[7].dataValues.lecture_id,
+          betting_points: body.betting_cost
+        }).then(() => {
+          models.User.update(
+            {points: req.cookies.points-body.betting_cost},
+            {where: {email: decodeURIComponent(req.cookies.user_email)}}
+            );
+            res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
+            res.redirect("/applyLecture");
+        }).catch(err => {
+          console.log(err);
+          res.send('<script type="text/javascript">alert("이미 베팅한 강의입니다!");</script>');
+        })
+      } else {
+        res.send('<script type="text/javascript">alert("베팅 한도를 초과했습니다!");</script>');
+      }
     });
-
     app.post('/apply_lecture_' + lecture_ids[8].dataValues.lecture_id, async function(req, res) {
       let body = req.body;
-      models.BettingLecture.create({
-        email: decodeURIComponent(req.cookies.user_email),
-        lecture_id: lecture_ids[8].dataValues.lecture_id,
-        betting_points: body.betting_cost
-      });
-      models.User.update(
-        {points: req.cookies.points-body.betting_cost},
-        {where: {email: decodeURIComponent(req.cookies.user_email)}}
-        );
-      res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
-      res.redirect("/applyLecture");
+      if(Number(req.cookies.points) >= Number(body.betting_cost)) {
+        models.BettingLecture.create({
+          email: decodeURIComponent(req.cookies.user_email),
+          lecture_id: lecture_ids[8].dataValues.lecture_id,
+          betting_points: body.betting_cost
+        }).then(() => {
+          models.User.update(
+            {points: req.cookies.points-body.betting_cost},
+            {where: {email: decodeURIComponent(req.cookies.user_email)}}
+            );
+            res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
+            res.redirect("/applyLecture");
+        }).catch(err => {
+          console.log(err);
+          res.send('<script type="text/javascript">alert("이미 베팅한 강의입니다!");</script>');
+        })
+      } else {
+        res.send('<script type="text/javascript">alert("베팅 한도를 초과했습니다!");</script>');
+      }
     });
-
     app.post('/apply_lecture_' + lecture_ids[9].dataValues.lecture_id, async function(req, res) {
       let body = req.body;
-      models.BettingLecture.create({
-        email: decodeURIComponent(req.cookies.user_email),
-        lecture_id: lecture_ids[9].dataValues.lecture_id,
-        betting_points: body.betting_cost
-      });
-      models.User.update(
-        {points: req.cookies.points-body.betting_cost},
-        {where: {email: decodeURIComponent(req.cookies.user_email)}}
-        );
-      res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
-      res.redirect("/applyLecture");
+      if(Number(req.cookies.points) >= Number(body.betting_cost)) {
+        models.BettingLecture.create({
+          email: decodeURIComponent(req.cookies.user_email),
+          lecture_id: lecture_ids[9].dataValues.lecture_id,
+          betting_points: body.betting_cost
+        }).then(() => {
+          models.User.update(
+            {points: req.cookies.points-body.betting_cost},
+            {where: {email: decodeURIComponent(req.cookies.user_email)}}
+            );
+            res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
+            res.redirect("/applyLecture");
+        }).catch(err => {
+          console.log(err);
+          res.send('<script type="text/javascript">alert("이미 베팅한 강의입니다!");</script>');
+        })
+      } else {
+        res.send('<script type="text/javascript">alert("베팅 한도를 초과했습니다!");</script>');
+      }
     });
-
     app.post('/apply_lecture_' + lecture_ids[10].dataValues.lecture_id, async function(req, res) {
       let body = req.body;
-      models.BettingLecture.create({
-        email: decodeURIComponent(req.cookies.user_email),
-        lecture_id: lecture_ids[10].dataValues.lecture_id,
-        betting_points: body.betting_cost
-      });
-      models.User.update(
-        {points: req.cookies.points-body.betting_cost},
-        {where: {email: decodeURIComponent(req.cookies.user_email)}}
-        );
-      res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
-      res.redirect("/applyLecture");
+      if(Number(req.cookies.points) >= Number(body.betting_cost)) {
+        models.BettingLecture.create({
+          email: decodeURIComponent(req.cookies.user_email),
+          lecture_id: lecture_ids[10].dataValues.lecture_id,
+          betting_points: body.betting_cost
+        }).then(() => {
+          models.User.update(
+            {points: req.cookies.points-body.betting_cost},
+            {where: {email: decodeURIComponent(req.cookies.user_email)}}
+            );
+            res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
+            res.redirect("/applyLecture");
+        }).catch(err => {
+          console.log(err);
+          res.send('<script type="text/javascript">alert("이미 베팅한 강의입니다!");</script>');
+        })
+      } else {
+        res.send('<script type="text/javascript">alert("베팅 한도를 초과했습니다!");</script>');
+      }
     });
-
     app.post('/apply_lecture_' + lecture_ids[11].dataValues.lecture_id, async function(req, res) {
       let body = req.body;
-      models.BettingLecture.create({
-        email: decodeURIComponent(req.cookies.user_email),
-        lecture_id: lecture_ids[11].dataValues.lecture_id,
-        betting_points: body.betting_cost
-      });
-      models.User.update(
-        {points: req.cookies.points-body.betting_cost},
-        {where: {email: decodeURIComponent(req.cookies.user_email)}}
-        );
-      res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
-      res.redirect("/applyLecture");
+      if(Number(req.cookies.points) >= Number(body.betting_cost)) {
+        models.BettingLecture.create({
+          email: decodeURIComponent(req.cookies.user_email),
+          lecture_id: lecture_ids[11].dataValues.lecture_id,
+          betting_points: body.betting_cost
+        }).then(() => {
+          models.User.update(
+            {points: req.cookies.points-body.betting_cost},
+            {where: {email: decodeURIComponent(req.cookies.user_email)}}
+            );
+            res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
+            res.redirect("/applyLecture");
+        }).catch(err => {
+          console.log(err);
+          res.send('<script type="text/javascript">alert("이미 베팅한 강의입니다!");</script>');
+        })
+      } else {
+        res.send('<script type="text/javascript">alert("베팅 한도를 초과했습니다!");</script>');
+      }
     });
 
     app.post("/delete_lecture_" + lecture_ids[0].dataValues.lecture_id, async function(req,res) {
@@ -341,7 +443,7 @@ module.exports = async function(app)
       });
       res.redirect("/appliedLecture");
   });
-
+  
   app.post("/delete_lecture_" + lecture_ids[1].dataValues.lecture_id, async function(req,res) {
     var lp = await models.BettingLecture.findOne({
       where: {
