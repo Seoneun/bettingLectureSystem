@@ -10,22 +10,13 @@ const sequelize = new Sequelize(config.database, config.username, config.passwor
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-//모델정보를 읽어온다.
+//모델정보를 읽기.
 db.User = require('./user')(sequelize, Sequelize);
 db.Lecture = require('./lecture')(sequelize, Sequelize);
 db.BettingLecture = require('./bettingLecture')(sequelize, Sequelize);
-//db.Comment = require('./comment')(sequelize, Sequelize);
 
-//모델간의 관계를 정의한다.
-//db.User.hasMany(db.Comment, { foreignKey: 'commenter', sourceKey: 'id' });
-//db.Comment.belongsTo(db.User, { foreignKey: 'commenter', targetKey: 'id' });
-db.BettingLecture.associate = function(models) {
-    db.BettingLecture.belongsTo(models.User, {
-        foreignKey: 'email'
-    });
-    db.BettingLecture.belongsTo(models.Lecture, {
-        foreignKey: 'lecture_id'
-    });
-}
+//모델간의 관계(다대다) 정의.
+db.User.belongsToMany(db.Lecture, {through:db.BettingLecture, foreignKey: 'email', onDelete: 'cascade'});
+db.Lecture.belongsToMany(db.User, {through:db.BettingLecture, foreignKey: 'lecture_id', onDelete: 'cascade'});
 
 module.exports = db;

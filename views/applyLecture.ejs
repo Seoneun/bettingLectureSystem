@@ -55,7 +55,7 @@
                 <li class="lecture_table_header_2"><%= lecture_table[j].lecture_name %></li>
                 <li class="lecture_table_header_3"><%= lecture_table[j].capacity %></li>
                 <form action="apply_lecture_<%= lecture_table[j].lecture_id %>" method="POST" style="display: flex; justify-content: center; align-items: center; width: 100%;">
-                    <li class="lecture_table_header_4"><input type="number" name="betting_cost"><button>신청</button></li>
+                    <li class="lecture_table_header_4"><input type="number" name="betting_cost" required><button>신청</button></li>
                 </form>
             </ul>
             <%}%>
