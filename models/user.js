@@ -21,11 +21,6 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: 5000
       },
-      /*
-      salt:{
-        type: DataTypes.STRING
-      },
-      */
       created_at: {
         type: DataTypes.DATE,
         allowNull: false,

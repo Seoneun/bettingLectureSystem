@@ -1,3 +1,5 @@
+const { sequelize } = require("../models");
+
 module.exports = async function(app)
 {
      const models = require("../models");
@@ -64,7 +66,7 @@ module.exports = async function(app)
   
       let result = await models.User.findOne({
           where: {
-              email : body.userEmail
+            email : body.userEmail
           }
       });
 
@@ -152,281 +154,699 @@ module.exports = async function(app)
       res.redirect("/applyLecture");
     });
   }*/
-
+    // 수강 신청
     app.post('/apply_lecture_' + lecture_ids[0].dataValues.lecture_id, async function(req, res) {
-      let body = req.body;
-      if(Number(req.cookies.points) >= Number(body.betting_cost)) {
+      // 트랜잭션
+      let transaction;
+
+      try {
+        transaction = await sequelize.transaction();
+
+        let body = req.body;
+        const capacity = await models.Lecture.findOne({
+        where: {
+          lecture_id: lecture_ids[0].dataValues.lecture_id
+        },
+        attributes: ['capacity']
+      })
+      if((Number(req.cookies.points) >= Number(body.betting_cost)) && Number(capacity.capacity) > 0) {
         models.BettingLecture.create({
           email: decodeURIComponent(req.cookies.user_email),
           lecture_id: lecture_ids[0].dataValues.lecture_id,
           betting_points: body.betting_cost
-        }).then(() => {
+        }).then(async () => {
           models.User.update(
             {points: req.cookies.points-body.betting_cost},
             {where: {email: decodeURIComponent(req.cookies.user_email)}}
             );
+          models.Lecture.update(
+            {capacity: capacity.capacity - 1},
+            {where: {lecture_id: lecture_ids[0].dataValues.lecture_id}}
+            ).catch(err=>{
+              console.log(err);
+              res.send('<script type="text/javascript">alert("정원이 가득찼습니다!");</script>');
+            })
             res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
+            //트랜잭션 커밋
+            await transaction.commit();
             res.redirect("/applyLecture");
+
         }).catch(err => {
           console.log(err);
           res.send('<script type="text/javascript">alert("이미 베팅한 강의입니다!");</script>');
         })
       } else {
-        res.send('<script type="text/javascript">alert("베팅 한도를 초과했습니다!");</script>');
+        res.send('<script type="text/javascript">alert("베팅 한도 초과 혹은 정원이 가득차서 수강 신청에 실패했습니다!");</script>');
+      }
+      } catch (err) {
+        //트랜잭션 수행 중 오류 발생 시 롤백
+        if (transaction) await transaction.rollback();
       }
     });
     app.post('/apply_lecture_' + lecture_ids[1].dataValues.lecture_id, async function(req, res) {
-      let body = req.body;
-      if(Number(req.cookies.points) >= Number(body.betting_cost)) {
+      // 트랜잭션
+      let transaction;
+
+      try {
+        transaction = await sequelize.transaction();
+
+        let body = req.body;
+        const capacity = await models.Lecture.findOne({
+        where: {
+          lecture_id: lecture_ids[1].dataValues.lecture_id
+        },
+        attributes: ['capacity']
+      })
+      if((Number(req.cookies.points) >= Number(body.betting_cost)) && Number(capacity.capacity) > 0) {
         models.BettingLecture.create({
           email: decodeURIComponent(req.cookies.user_email),
           lecture_id: lecture_ids[1].dataValues.lecture_id,
           betting_points: body.betting_cost
-        }).then(() => {
+        }).then(async () => {
           models.User.update(
             {points: req.cookies.points-body.betting_cost},
             {where: {email: decodeURIComponent(req.cookies.user_email)}}
             );
+          models.Lecture.update(
+            {capacity: capacity.capacity - 1},
+            {where: {lecture_id: lecture_ids[1].dataValues.lecture_id}}
+            ).catch(err=>{
+              console.log(err);
+              res.send('<script type="text/javascript">alert("정원이 가득찼습니다!");</script>');
+            })
             res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
+            //트랜잭션 커밋
+            await transaction.commit();
             res.redirect("/applyLecture");
+
         }).catch(err => {
           console.log(err);
           res.send('<script type="text/javascript">alert("이미 베팅한 강의입니다!");</script>');
         })
       } else {
-        console.log(req.cookies.points);
-        console.log(body.betting_cost);
-        res.send('<script type="text/javascript">alert("베팅 한도를 초과했습니다!");</script>');
+        res.send('<script type="text/javascript">alert("베팅 한도 초과 혹은 정원이 가득차서 수강 신청에 실패했습니다!");</script>');
+      }
+      } catch (err) {
+        //트랜잭션 수행 중 오류 발생 시 롤백
+        if (transaction) await transaction.rollback();
       }
     });
     app.post('/apply_lecture_' + lecture_ids[2].dataValues.lecture_id, async function(req, res) {
-      let body = req.body;
-      if(Number(req.cookies.points) >= Number(body.betting_cost)) {
+      // 트랜잭션
+      let transaction;
+
+      try {
+        transaction = await sequelize.transaction();
+
+        let body = req.body;
+        const capacity = await models.Lecture.findOne({
+        where: {
+          lecture_id: lecture_ids[2].dataValues.lecture_id
+        },
+        attributes: ['capacity']
+      })
+      if((Number(req.cookies.points) >= Number(body.betting_cost)) && Number(capacity.capacity) > 0) {
         models.BettingLecture.create({
           email: decodeURIComponent(req.cookies.user_email),
           lecture_id: lecture_ids[2].dataValues.lecture_id,
           betting_points: body.betting_cost
-        }).then(() => {
+        }).then(async () => {
           models.User.update(
             {points: req.cookies.points-body.betting_cost},
             {where: {email: decodeURIComponent(req.cookies.user_email)}}
             );
+          models.Lecture.update(
+            {capacity: capacity.capacity - 1},
+            {where: {lecture_id: lecture_ids[2].dataValues.lecture_id}}
+            ).catch(err=>{
+              console.log(err);
+              res.send('<script type="text/javascript">alert("정원이 가득찼습니다!");</script>');
+            })
             res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
+            //트랜잭션 커밋
+            await transaction.commit();
             res.redirect("/applyLecture");
+
         }).catch(err => {
           console.log(err);
           res.send('<script type="text/javascript">alert("이미 베팅한 강의입니다!");</script>');
         })
       } else {
-        res.send('<script type="text/javascript">alert("베팅 한도를 초과했습니다!");</script>');
+        res.send('<script type="text/javascript">alert("베팅 한도 초과 혹은 정원이 가득차서 수강 신청에 실패했습니다!");</script>');
+      }
+      } catch (err) {
+        //트랜잭션 수행 중 오류 발생 시 롤백
+        if (transaction) await transaction.rollback();
       }
     });
     app.post('/apply_lecture_' + lecture_ids[3].dataValues.lecture_id, async function(req, res) {
-      let body = req.body;
-      if(Number(req.cookies.points) >= Number(body.betting_cost)) {
+      // 트랜잭션
+      let transaction;
+
+      try {
+        transaction = await sequelize.transaction();
+
+        let body = req.body;
+        const capacity = await models.Lecture.findOne({
+        where: {
+          lecture_id: lecture_ids[3].dataValues.lecture_id
+        },
+        attributes: ['capacity']
+      })
+      if((Number(req.cookies.points) >= Number(body.betting_cost)) && Number(capacity.capacity) > 0) {
         models.BettingLecture.create({
           email: decodeURIComponent(req.cookies.user_email),
           lecture_id: lecture_ids[3].dataValues.lecture_id,
           betting_points: body.betting_cost
-        }).then(() => {
+        }).then(async () => {
           models.User.update(
             {points: req.cookies.points-body.betting_cost},
             {where: {email: decodeURIComponent(req.cookies.user_email)}}
             );
+          models.Lecture.update(
+            {capacity: capacity.capacity - 1},
+            {where: {lecture_id: lecture_ids[3].dataValues.lecture_id}}
+            ).catch(err=>{
+              console.log(err);
+              res.send('<script type="text/javascript">alert("정원이 가득찼습니다!");</script>');
+            })
             res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
+            //트랜잭션 커밋
+            await transaction.commit();
             res.redirect("/applyLecture");
+
         }).catch(err => {
           console.log(err);
           res.send('<script type="text/javascript">alert("이미 베팅한 강의입니다!");</script>');
         })
       } else {
-        res.send('<script type="text/javascript">alert("베팅 한도를 초과했습니다!");</script>');
+        res.send('<script type="text/javascript">alert("베팅 한도 초과 혹은 정원이 가득차서 수강 신청에 실패했습니다!");</script>');
+      }
+      } catch (err) {
+        //트랜잭션 수행 중 오류 발생 시 롤백
+        if (transaction) await transaction.rollback();
       }
     });
     app.post('/apply_lecture_' + lecture_ids[4].dataValues.lecture_id, async function(req, res) {
-      let body = req.body;
-      if(Number(req.cookies.points) >= Number(body.betting_cost)) {
+      // 트랜잭션
+      let transaction;
+
+      try {
+        transaction = await sequelize.transaction();
+
+        let body = req.body;
+        const capacity = await models.Lecture.findOne({
+        where: {
+          lecture_id: lecture_ids[4].dataValues.lecture_id
+        },
+        attributes: ['capacity']
+      })
+      if((Number(req.cookies.points) >= Number(body.betting_cost)) && Number(capacity.capacity) > 0) {
         models.BettingLecture.create({
           email: decodeURIComponent(req.cookies.user_email),
           lecture_id: lecture_ids[4].dataValues.lecture_id,
           betting_points: body.betting_cost
-        }).then(() => {
+        }).then(async () => {
           models.User.update(
             {points: req.cookies.points-body.betting_cost},
             {where: {email: decodeURIComponent(req.cookies.user_email)}}
             );
+          models.Lecture.update(
+            {capacity: capacity.capacity - 1},
+            {where: {lecture_id: lecture_ids[4].dataValues.lecture_id}}
+            ).catch(err=>{
+              console.log(err);
+              res.send('<script type="text/javascript">alert("정원이 가득찼습니다!");</script>');
+            })
             res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
+            //트랜잭션 커밋
+            await transaction.commit();
             res.redirect("/applyLecture");
+
         }).catch(err => {
           console.log(err);
           res.send('<script type="text/javascript">alert("이미 베팅한 강의입니다!");</script>');
         })
       } else {
-        res.send('<script type="text/javascript">alert("베팅 한도를 초과했습니다!");</script>');
+        res.send('<script type="text/javascript">alert("베팅 한도 초과 혹은 정원이 가득차서 수강 신청에 실패했습니다!");</script>');
+      }
+      } catch (err) {
+        //트랜잭션 수행 중 오류 발생 시 롤백
+        if (transaction) await transaction.rollback();
       }
     });
     app.post('/apply_lecture_' + lecture_ids[5].dataValues.lecture_id, async function(req, res) {
-      let body = req.body;
-      if(Number(req.cookies.points) >= Number(body.betting_cost)) {
+      // 트랜잭션
+      let transaction;
+
+      try {
+        transaction = await sequelize.transaction();
+
+        let body = req.body;
+        const capacity = await models.Lecture.findOne({
+        where: {
+          lecture_id: lecture_ids[5].dataValues.lecture_id
+        },
+        attributes: ['capacity']
+      })
+      if((Number(req.cookies.points) >= Number(body.betting_cost)) && Number(capacity.capacity) > 0) {
         models.BettingLecture.create({
           email: decodeURIComponent(req.cookies.user_email),
           lecture_id: lecture_ids[5].dataValues.lecture_id,
           betting_points: body.betting_cost
-        }).then(() => {
+        }).then(async () => {
           models.User.update(
             {points: req.cookies.points-body.betting_cost},
             {where: {email: decodeURIComponent(req.cookies.user_email)}}
             );
+          models.Lecture.update(
+            {capacity: capacity.capacity - 1},
+            {where: {lecture_id: lecture_ids[5].dataValues.lecture_id}}
+            ).catch(err=>{
+              console.log(err);
+              res.send('<script type="text/javascript">alert("정원이 가득찼습니다!");</script>');
+            })
             res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
+            //트랜잭션 커밋
+            await transaction.commit();
             res.redirect("/applyLecture");
+
         }).catch(err => {
           console.log(err);
           res.send('<script type="text/javascript">alert("이미 베팅한 강의입니다!");</script>');
         })
       } else {
-        res.send('<script type="text/javascript">alert("베팅 한도를 초과했습니다!");</script>');
+        res.send('<script type="text/javascript">alert("베팅 한도 초과 혹은 정원이 가득차서 수강 신청에 실패했습니다!");</script>');
+      }
+      } catch (err) {
+        //트랜잭션 수행 중 오류 발생 시 롤백
+        if (transaction) await transaction.rollback();
       }
     });
     app.post('/apply_lecture_' + lecture_ids[6].dataValues.lecture_id, async function(req, res) {
-      let body = req.body;
-      if(Number(req.cookies.points) >= Number(body.betting_cost)) {
+      // 트랜잭션
+      let transaction;
+
+      try {
+        transaction = await sequelize.transaction();
+
+        let body = req.body;
+        const capacity = await models.Lecture.findOne({
+        where: {
+          lecture_id: lecture_ids[6].dataValues.lecture_id
+        },
+        attributes: ['capacity']
+      })
+      if((Number(req.cookies.points) >= Number(body.betting_cost)) && Number(capacity.capacity) > 0) {
         models.BettingLecture.create({
           email: decodeURIComponent(req.cookies.user_email),
           lecture_id: lecture_ids[6].dataValues.lecture_id,
           betting_points: body.betting_cost
-        }).then(() => {
+        }).then(async () => {
           models.User.update(
             {points: req.cookies.points-body.betting_cost},
             {where: {email: decodeURIComponent(req.cookies.user_email)}}
             );
+          models.Lecture.update(
+            {capacity: capacity.capacity - 1},
+            {where: {lecture_id: lecture_ids[6].dataValues.lecture_id}}
+            ).catch(err=>{
+              console.log(err);
+              res.send('<script type="text/javascript">alert("정원이 가득찼습니다!");</script>');
+            })
             res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
+            //트랜잭션 커밋
+            await transaction.commit();
             res.redirect("/applyLecture");
+
         }).catch(err => {
           console.log(err);
           res.send('<script type="text/javascript">alert("이미 베팅한 강의입니다!");</script>');
         })
       } else {
-        res.send('<script type="text/javascript">alert("베팅 한도를 초과했습니다!");</script>');
+        res.send('<script type="text/javascript">alert("베팅 한도 초과 혹은 정원이 가득차서 수강 신청에 실패했습니다!");</script>');
+      }
+      } catch (err) {
+        //트랜잭션 수행 중 오류 발생 시 롤백
+        if (transaction) await transaction.rollback();
       }
     });
     app.post('/apply_lecture_' + lecture_ids[7].dataValues.lecture_id, async function(req, res) {
-      let body = req.body;
-      if(Number(req.cookies.points) >= Number(body.betting_cost)) {
+      // 트랜잭션
+      let transaction;
+
+      try {
+        transaction = await sequelize.transaction();
+
+        let body = req.body;
+        const capacity = await models.Lecture.findOne({
+        where: {
+          lecture_id: lecture_ids[7].dataValues.lecture_id
+        },
+        attributes: ['capacity']
+      })
+      if((Number(req.cookies.points) >= Number(body.betting_cost)) && Number(capacity.capacity) > 0) {
         models.BettingLecture.create({
           email: decodeURIComponent(req.cookies.user_email),
           lecture_id: lecture_ids[7].dataValues.lecture_id,
           betting_points: body.betting_cost
-        }).then(() => {
+        }).then(async () => {
           models.User.update(
             {points: req.cookies.points-body.betting_cost},
             {where: {email: decodeURIComponent(req.cookies.user_email)}}
             );
+          models.Lecture.update(
+            {capacity: capacity.capacity - 1},
+            {where: {lecture_id: lecture_ids[7].dataValues.lecture_id}}
+            ).catch(err=>{
+              console.log(err);
+              res.send('<script type="text/javascript">alert("정원이 가득찼습니다!");</script>');
+            })
             res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
+            //트랜잭션 커밋
+            await transaction.commit();
             res.redirect("/applyLecture");
+
         }).catch(err => {
           console.log(err);
           res.send('<script type="text/javascript">alert("이미 베팅한 강의입니다!");</script>');
         })
       } else {
-        res.send('<script type="text/javascript">alert("베팅 한도를 초과했습니다!");</script>');
+        res.send('<script type="text/javascript">alert("베팅 한도 초과 혹은 정원이 가득차서 수강 신청에 실패했습니다!");</script>');
+      }
+      } catch (err) {
+        //트랜잭션 수행 중 오류 발생 시 롤백
+        if (transaction) await transaction.rollback();
       }
     });
     app.post('/apply_lecture_' + lecture_ids[8].dataValues.lecture_id, async function(req, res) {
-      let body = req.body;
-      if(Number(req.cookies.points) >= Number(body.betting_cost)) {
+      // 트랜잭션
+      let transaction;
+
+      try {
+        transaction = await sequelize.transaction();
+
+        let body = req.body;
+        const capacity = await models.Lecture.findOne({
+        where: {
+          lecture_id: lecture_ids[8].dataValues.lecture_id
+        },
+        attributes: ['capacity']
+      })
+      if((Number(req.cookies.points) >= Number(body.betting_cost)) && Number(capacity.capacity) > 0) {
         models.BettingLecture.create({
           email: decodeURIComponent(req.cookies.user_email),
           lecture_id: lecture_ids[8].dataValues.lecture_id,
           betting_points: body.betting_cost
-        }).then(() => {
+        }).then(async () => {
           models.User.update(
             {points: req.cookies.points-body.betting_cost},
             {where: {email: decodeURIComponent(req.cookies.user_email)}}
             );
+          models.Lecture.update(
+            {capacity: capacity.capacity - 1},
+            {where: {lecture_id: lecture_ids[8].dataValues.lecture_id}}
+            ).catch(err=>{
+              console.log(err);
+              res.send('<script type="text/javascript">alert("정원이 가득찼습니다!");</script>');
+            })
             res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
+            //트랜잭션 커밋
+            await transaction.commit();
             res.redirect("/applyLecture");
+
         }).catch(err => {
           console.log(err);
           res.send('<script type="text/javascript">alert("이미 베팅한 강의입니다!");</script>');
         })
       } else {
-        res.send('<script type="text/javascript">alert("베팅 한도를 초과했습니다!");</script>');
+        res.send('<script type="text/javascript">alert("베팅 한도 초과 혹은 정원이 가득차서 수강 신청에 실패했습니다!");</script>');
+      }
+      } catch (err) {
+        //트랜잭션 수행 중 오류 발생 시 롤백
+        if (transaction) await transaction.rollback();
       }
     });
     app.post('/apply_lecture_' + lecture_ids[9].dataValues.lecture_id, async function(req, res) {
-      let body = req.body;
-      if(Number(req.cookies.points) >= Number(body.betting_cost)) {
+      // 트랜잭션
+      let transaction;
+
+      try {
+        transaction = await sequelize.transaction();
+
+        let body = req.body;
+        const capacity = await models.Lecture.findOne({
+        where: {
+          lecture_id: lecture_ids[9].dataValues.lecture_id
+        },
+        attributes: ['capacity']
+      })
+      if((Number(req.cookies.points) >= Number(body.betting_cost)) && Number(capacity.capacity) > 0) {
         models.BettingLecture.create({
           email: decodeURIComponent(req.cookies.user_email),
           lecture_id: lecture_ids[9].dataValues.lecture_id,
           betting_points: body.betting_cost
-        }).then(() => {
+        }).then(async () => {
           models.User.update(
             {points: req.cookies.points-body.betting_cost},
             {where: {email: decodeURIComponent(req.cookies.user_email)}}
             );
+          models.Lecture.update(
+            {capacity: capacity.capacity - 1},
+            {where: {lecture_id: lecture_ids[9].dataValues.lecture_id}}
+            ).catch(err=>{
+              console.log(err);
+              res.send('<script type="text/javascript">alert("정원이 가득찼습니다!");</script>');
+            })
             res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
+            //트랜잭션 커밋
+            await transaction.commit();
             res.redirect("/applyLecture");
+
         }).catch(err => {
           console.log(err);
           res.send('<script type="text/javascript">alert("이미 베팅한 강의입니다!");</script>');
         })
       } else {
-        res.send('<script type="text/javascript">alert("베팅 한도를 초과했습니다!");</script>');
+        res.send('<script type="text/javascript">alert("베팅 한도 초과 혹은 정원이 가득차서 수강 신청에 실패했습니다!");</script>');
+      }
+      } catch (err) {
+        //트랜잭션 수행 중 오류 발생 시 롤백
+        if (transaction) await transaction.rollback();
       }
     });
     app.post('/apply_lecture_' + lecture_ids[10].dataValues.lecture_id, async function(req, res) {
-      let body = req.body;
-      if(Number(req.cookies.points) >= Number(body.betting_cost)) {
+      // 트랜잭션
+      let transaction;
+
+      try {
+        transaction = await sequelize.transaction();
+
+        let body = req.body;
+        const capacity = await models.Lecture.findOne({
+        where: {
+          lecture_id: lecture_ids[10].dataValues.lecture_id
+        },
+        attributes: ['capacity']
+      })
+      if((Number(req.cookies.points) >= Number(body.betting_cost)) && Number(capacity.capacity) > 0) {
         models.BettingLecture.create({
           email: decodeURIComponent(req.cookies.user_email),
           lecture_id: lecture_ids[10].dataValues.lecture_id,
           betting_points: body.betting_cost
-        }).then(() => {
+        }).then(async () => {
           models.User.update(
             {points: req.cookies.points-body.betting_cost},
             {where: {email: decodeURIComponent(req.cookies.user_email)}}
             );
+          models.Lecture.update(
+            {capacity: capacity.capacity - 1},
+            {where: {lecture_id: lecture_ids[10].dataValues.lecture_id}}
+            ).catch(err=>{
+              console.log(err);
+              res.send('<script type="text/javascript">alert("정원이 가득찼습니다!");</script>');
+            })
             res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
+            //트랜잭션 커밋
+            await transaction.commit();
             res.redirect("/applyLecture");
+
         }).catch(err => {
           console.log(err);
           res.send('<script type="text/javascript">alert("이미 베팅한 강의입니다!");</script>');
         })
       } else {
-        res.send('<script type="text/javascript">alert("베팅 한도를 초과했습니다!");</script>');
+        res.send('<script type="text/javascript">alert("베팅 한도 초과 혹은 정원이 가득차서 수강 신청에 실패했습니다!");</script>');
+      }
+      } catch (err) {
+        //트랜잭션 수행 중 오류 발생 시 롤백
+        if (transaction) await transaction.rollback();
       }
     });
     app.post('/apply_lecture_' + lecture_ids[11].dataValues.lecture_id, async function(req, res) {
-      let body = req.body;
-      if(Number(req.cookies.points) >= Number(body.betting_cost)) {
+      // 트랜잭션
+      let transaction;
+
+      try {
+        transaction = await sequelize.transaction();
+
+        let body = req.body;
+        const capacity = await models.Lecture.findOne({
+        where: {
+          lecture_id: lecture_ids[11].dataValues.lecture_id
+        },
+        attributes: ['capacity']
+      })
+      if((Number(req.cookies.points) >= Number(body.betting_cost)) && Number(capacity.capacity) > 0) {
         models.BettingLecture.create({
           email: decodeURIComponent(req.cookies.user_email),
           lecture_id: lecture_ids[11].dataValues.lecture_id,
           betting_points: body.betting_cost
-        }).then(() => {
+        }).then(async () => {
           models.User.update(
             {points: req.cookies.points-body.betting_cost},
             {where: {email: decodeURIComponent(req.cookies.user_email)}}
             );
+          models.Lecture.update(
+            {capacity: capacity.capacity - 1},
+            {where: {lecture_id: lecture_ids[11].dataValues.lecture_id}}
+            ).catch(err=>{
+              console.log(err);
+              res.send('<script type="text/javascript">alert("정원이 가득찼습니다!");</script>');
+            })
             res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
+            //트랜잭션 커밋
+            await transaction.commit();
             res.redirect("/applyLecture");
+
         }).catch(err => {
           console.log(err);
           res.send('<script type="text/javascript">alert("이미 베팅한 강의입니다!");</script>');
         })
       } else {
-        res.send('<script type="text/javascript">alert("베팅 한도를 초과했습니다!");</script>');
+        res.send('<script type="text/javascript">alert("베팅 한도 초과 혹은 정원이 가득차서 수강 신청에 실패했습니다!");</script>');
+      }
+      } catch (err) {
+        //트랜잭션 수행 중 오류 발생 시 롤백
+        if (transaction) await transaction.rollback();
       }
     });
+    app.post('/apply_lecture_' + lecture_ids[12].dataValues.lecture_id, async function(req, res) {
+      // 트랜잭션
+      let transaction;
 
+      try {
+        transaction = await sequelize.transaction();
+
+        let body = req.body;
+        const capacity = await models.Lecture.findOne({
+        where: {
+          lecture_id: lecture_ids[12].dataValues.lecture_id
+        },
+        attributes: ['capacity']
+      })
+      if((Number(req.cookies.points) >= Number(body.betting_cost)) && Number(capacity.capacity) > 0) {
+        models.BettingLecture.create({
+          email: decodeURIComponent(req.cookies.user_email),
+          lecture_id: lecture_ids[12].dataValues.lecture_id,
+          betting_points: body.betting_cost
+        }).then(async () => {
+          models.User.update(
+            {points: req.cookies.points-body.betting_cost},
+            {where: {email: decodeURIComponent(req.cookies.user_email)}}
+            );
+          models.Lecture.update(
+            {capacity: capacity.capacity - 1},
+            {where: {lecture_id: lecture_ids[12].dataValues.lecture_id}}
+            ).catch(err=>{
+              console.log(err);
+              res.send('<script type="text/javascript">alert("정원이 가득찼습니다!");</script>');
+            })
+            res.cookie("points", req.cookies.points-body.betting_cost, {overwrite: true});
+            //트랜잭션 커밋
+            await transaction.commit();
+            res.redirect("/applyLecture");
+
+        }).catch(err => {
+          console.log(err);
+          res.send('<script type="text/javascript">alert("이미 베팅한 강의입니다!");</script>');
+        })
+      } else {
+        res.send('<script type="text/javascript">alert("베팅 한도 초과 혹은 정원이 가득차서 수강 신청에 실패했습니다!");</script>');
+      }
+      } catch (err) {
+        //트랜잭션 수행 중 오류 발생 시 롤백
+        if (transaction) await transaction.rollback();
+      }
+    });
+    
+    //수강신청 철회
     app.post("/delete_lecture_" + lecture_ids[0].dataValues.lecture_id, async function(req,res) {
+      // 트랜잭션
+      let transaction;
+
+      try {
+        transaction = await sequelize.transaction();
+
+        var lp = await models.BettingLecture.findOne({
+          where: {
+            email: decodeURIComponent(req.cookies.user_email),
+            lecture_id: lecture_ids[0].dataValues.lecture_id,
+          },
+          attributes: ['betting_points']
+        })
+  
+        const capacity = await models.Lecture.findOne({
+          where: {
+            lecture_id: lecture_ids[0].dataValues.lecture_id
+          },
+          attributes: ['capacity']
+        })
+  
+        models.User.update(
+          {points: Number(req.cookies.points)+Number(lp.dataValues.betting_points)},
+          {where: {email: decodeURIComponent(req.cookies.user_email)}}
+          );
+        res.cookie("points", Number(req.cookies.points)+Number(lp.dataValues.betting_points), {overwrite: true});
+  
+        models.BettingLecture.destroy({
+          where: {
+            email: decodeURIComponent(req.cookies.user_email),
+            lecture_id: lecture_ids[0].dataValues.lecture_id,
+          }
+        });
+        models.Lecture.update(
+          {capacity: capacity.capacity + 1},
+          {where: {lecture_id: lecture_ids[0].dataValues.lecture_id}}
+          );
+        //트랜잭션 커밋
+        await transaction.commit();
+        res.redirect("/appliedLecture");
+      } catch (err) {
+        //트랜잭션 수행 중 오류 발생 시 롤백
+        if (transaction) await transaction.rollback();
+      }
+  });
+  app.post("/delete_lecture_" + lecture_ids[1].dataValues.lecture_id, async function(req,res) {
+    // 트랜잭션
+    let transaction;
+
+    try {
+      transaction = await sequelize.transaction();
+
       var lp = await models.BettingLecture.findOne({
         where: {
           email: decodeURIComponent(req.cookies.user_email),
-          lecture_id: lecture_ids[0].dataValues.lecture_id,
+          lecture_id: lecture_ids[1].dataValues.lecture_id,
         },
         attributes: ['betting_points']
+      })
+
+      const capacity = await models.Lecture.findOne({
+        where: {
+          lecture_id: lecture_ids[1].dataValues.lecture_id
+        },
+        attributes: ['capacity']
       })
 
       models.User.update(
@@ -438,19 +858,41 @@ module.exports = async function(app)
       models.BettingLecture.destroy({
         where: {
           email: decodeURIComponent(req.cookies.user_email),
-          lecture_id: lecture_ids[0].dataValues.lecture_id,
+          lecture_id: lecture_ids[1].dataValues.lecture_id,
         }
       });
+      models.Lecture.update(
+        {capacity: capacity.capacity + 1},
+        {where: {lecture_id: lecture_ids[1].dataValues.lecture_id}}
+        );
+      //트랜잭션 커밋
+      await transaction.commit();
       res.redirect("/appliedLecture");
-  });
-  
-  app.post("/delete_lecture_" + lecture_ids[1].dataValues.lecture_id, async function(req,res) {
+    } catch (err) {
+      //트랜잭션 수행 중 오류 발생 시 롤백
+      if (transaction) await transaction.rollback();
+    }
+});
+app.post("/delete_lecture_" + lecture_ids[2].dataValues.lecture_id, async function(req,res) {
+  // 트랜잭션
+  let transaction;
+
+  try {
+    transaction = await sequelize.transaction();
+
     var lp = await models.BettingLecture.findOne({
       where: {
         email: decodeURIComponent(req.cookies.user_email),
-        lecture_id: lecture_ids[1].dataValues.lecture_id,
+        lecture_id: lecture_ids[2].dataValues.lecture_id,
       },
       attributes: ['betting_points']
+    })
+
+    const capacity = await models.Lecture.findOne({
+      where: {
+        lecture_id: lecture_ids[2].dataValues.lecture_id
+      },
+      attributes: ['capacity']
     })
 
     models.User.update(
@@ -462,249 +904,479 @@ module.exports = async function(app)
     models.BettingLecture.destroy({
       where: {
         email: decodeURIComponent(req.cookies.user_email),
-        lecture_id: lecture_ids[1].dataValues.lecture_id,
+        lecture_id: lecture_ids[2].dataValues.lecture_id,
       }
     });
+    models.Lecture.update(
+      {capacity: capacity.capacity + 1},
+      {where: {lecture_id: lecture_ids[2].dataValues.lecture_id}}
+      );
+    //트랜잭션 커밋
+    await transaction.commit();
     res.redirect("/appliedLecture");
+  } catch (err) {
+    //트랜잭션 수행 중 오류 발생 시 롤백
+    if (transaction) await transaction.rollback();
+  }
 });
-
-app.post("/delete_lecture_" + lecture_ids[2].dataValues.lecture_id, async function(req,res) {
-  var lp = await models.BettingLecture.findOne({
-    where: {
-      email: decodeURIComponent(req.cookies.user_email),
-      lecture_id: lecture_ids[2].dataValues.lecture_id,
-    },
-    attributes: ['betting_points']
-  })
-
-  models.User.update(
-    {points: Number(req.cookies.points)+Number(lp.dataValues.betting_points)},
-    {where: {email: decodeURIComponent(req.cookies.user_email)}}
-    );
-  res.cookie("points", Number(req.cookies.points)+Number(lp.dataValues.betting_points), {overwrite: true});
-
-  models.BettingLecture.destroy({
-    where: {
-      email: decodeURIComponent(req.cookies.user_email),
-      lecture_id: lecture_ids[2].dataValues.lecture_id,
-    }
-  });
-  res.redirect("/appliedLecture");
-});
-
 app.post("/delete_lecture_" + lecture_ids[3].dataValues.lecture_id, async function(req,res) {
-  var lp = await models.BettingLecture.findOne({
-    where: {
-      email: decodeURIComponent(req.cookies.user_email),
-      lecture_id: lecture_ids[3].dataValues.lecture_id,
-    },
-    attributes: ['betting_points']
-  })
+  // 트랜잭션
+  let transaction;
 
-  models.User.update(
-    {points: Number(req.cookies.points)+Number(lp.dataValues.betting_points)},
-    {where: {email: decodeURIComponent(req.cookies.user_email)}}
-    );
-  res.cookie("points", Number(req.cookies.points)+Number(lp.dataValues.betting_points), {overwrite: true});
+  try {
+    transaction = await sequelize.transaction();
 
-  models.BettingLecture.destroy({
-    where: {
-      email: decodeURIComponent(req.cookies.user_email),
-      lecture_id: lecture_ids[3].dataValues.lecture_id,
-    }
-  });
-  res.redirect("/appliedLecture");
+    var lp = await models.BettingLecture.findOne({
+      where: {
+        email: decodeURIComponent(req.cookies.user_email),
+        lecture_id: lecture_ids[3].dataValues.lecture_id,
+      },
+      attributes: ['betting_points']
+    })
+
+    const capacity = await models.Lecture.findOne({
+      where: {
+        lecture_id: lecture_ids[3].dataValues.lecture_id
+      },
+      attributes: ['capacity']
+    })
+
+    models.User.update(
+      {points: Number(req.cookies.points)+Number(lp.dataValues.betting_points)},
+      {where: {email: decodeURIComponent(req.cookies.user_email)}}
+      );
+    res.cookie("points", Number(req.cookies.points)+Number(lp.dataValues.betting_points), {overwrite: true});
+
+    models.BettingLecture.destroy({
+      where: {
+        email: decodeURIComponent(req.cookies.user_email),
+        lecture_id: lecture_ids[3].dataValues.lecture_id,
+      }
+    });
+    models.Lecture.update(
+      {capacity: capacity.capacity + 1},
+      {where: {lecture_id: lecture_ids[3].dataValues.lecture_id}}
+      );
+    //트랜잭션 커밋
+    await transaction.commit();
+    res.redirect("/appliedLecture");
+  } catch (err) {
+    //트랜잭션 수행 중 오류 발생 시 롤백
+    if (transaction) await transaction.rollback();
+  }
 });
-
 app.post("/delete_lecture_" + lecture_ids[4].dataValues.lecture_id, async function(req,res) {
-  var lp = await models.BettingLecture.findOne({
-    where: {
-      email: decodeURIComponent(req.cookies.user_email),
-      lecture_id: lecture_ids[4].dataValues.lecture_id,
-    },
-    attributes: ['betting_points']
-  })
+  // 트랜잭션
+  let transaction;
 
-  models.User.update(
-    {points: Number(req.cookies.points)+Number(lp.dataValues.betting_points)},
-    {where: {email: decodeURIComponent(req.cookies.user_email)}}
-    );
-  res.cookie("points", Number(req.cookies.points)+Number(lp.dataValues.betting_points), {overwrite: true});
+  try {
+    transaction = await sequelize.transaction();
 
-  models.BettingLecture.destroy({
-    where: {
-      email: decodeURIComponent(req.cookies.user_email),
-      lecture_id: lecture_ids[4].dataValues.lecture_id,
-    }
-  });
-  res.redirect("/appliedLecture");
+    var lp = await models.BettingLecture.findOne({
+      where: {
+        email: decodeURIComponent(req.cookies.user_email),
+        lecture_id: lecture_ids[4].dataValues.lecture_id,
+      },
+      attributes: ['betting_points']
+    })
+
+    const capacity = await models.Lecture.findOne({
+      where: {
+        lecture_id: lecture_ids[4].dataValues.lecture_id
+      },
+      attributes: ['capacity']
+    })
+
+    models.User.update(
+      {points: Number(req.cookies.points)+Number(lp.dataValues.betting_points)},
+      {where: {email: decodeURIComponent(req.cookies.user_email)}}
+      );
+    res.cookie("points", Number(req.cookies.points)+Number(lp.dataValues.betting_points), {overwrite: true});
+
+    models.BettingLecture.destroy({
+      where: {
+        email: decodeURIComponent(req.cookies.user_email),
+        lecture_id: lecture_ids[4].dataValues.lecture_id,
+      }
+    });
+    models.Lecture.update(
+      {capacity: capacity.capacity + 1},
+      {where: {lecture_id: lecture_ids[4].dataValues.lecture_id}}
+      );
+    //트랜잭션 커밋
+    await transaction.commit();
+    res.redirect("/appliedLecture");
+  } catch (err) {
+    //트랜잭션 수행 중 오류 발생 시 롤백
+    if (transaction) await transaction.rollback();
+  }
 });
-
 app.post("/delete_lecture_" + lecture_ids[5].dataValues.lecture_id, async function(req,res) {
-  var lp = await models.BettingLecture.findOne({
-    where: {
-      email: decodeURIComponent(req.cookies.user_email),
-      lecture_id: lecture_ids[5].dataValues.lecture_id,
-    },
-    attributes: ['betting_points']
-  })
+  // 트랜잭션
+  let transaction;
 
-  models.User.update(
-    {points: Number(req.cookies.points)+Number(lp.dataValues.betting_points)},
-    {where: {email: decodeURIComponent(req.cookies.user_email)}}
-    );
-  res.cookie("points", Number(req.cookies.points)+Number(lp.dataValues.betting_points), {overwrite: true});
+  try {
+    transaction = await sequelize.transaction();
 
-  models.BettingLecture.destroy({
-    where: {
-      email: decodeURIComponent(req.cookies.user_email),
-      lecture_id: lecture_ids[5].dataValues.lecture_id,
-    }
-  });
-  res.redirect("/appliedLecture");
+    var lp = await models.BettingLecture.findOne({
+      where: {
+        email: decodeURIComponent(req.cookies.user_email),
+        lecture_id: lecture_ids[5].dataValues.lecture_id,
+      },
+      attributes: ['betting_points']
+    })
+
+    const capacity = await models.Lecture.findOne({
+      where: {
+        lecture_id: lecture_ids[5].dataValues.lecture_id
+      },
+      attributes: ['capacity']
+    })
+
+    models.User.update(
+      {points: Number(req.cookies.points)+Number(lp.dataValues.betting_points)},
+      {where: {email: decodeURIComponent(req.cookies.user_email)}}
+      );
+    res.cookie("points", Number(req.cookies.points)+Number(lp.dataValues.betting_points), {overwrite: true});
+
+    models.BettingLecture.destroy({
+      where: {
+        email: decodeURIComponent(req.cookies.user_email),
+        lecture_id: lecture_ids[5].dataValues.lecture_id,
+      }
+    });
+    models.Lecture.update(
+      {capacity: capacity.capacity + 1},
+      {where: {lecture_id: lecture_ids[5].dataValues.lecture_id}}
+      );
+    //트랜잭션 커밋
+    await transaction.commit();
+    res.redirect("/appliedLecture");
+  } catch (err) {
+    //트랜잭션 수행 중 오류 발생 시 롤백
+    if (transaction) await transaction.rollback();
+  }
 });
-
 app.post("/delete_lecture_" + lecture_ids[6].dataValues.lecture_id, async function(req,res) {
-  var lp = await models.BettingLecture.findOne({
-    where: {
-      email: decodeURIComponent(req.cookies.user_email),
-      lecture_id: lecture_ids[6].dataValues.lecture_id,
-    },
-    attributes: ['betting_points']
-  })
+  // 트랜잭션
+  let transaction;
 
-  models.User.update(
-    {points: Number(req.cookies.points)+Number(lp.dataValues.betting_points)},
-    {where: {email: decodeURIComponent(req.cookies.user_email)}}
-    );
-  res.cookie("points", Number(req.cookies.points)+Number(lp.dataValues.betting_points), {overwrite: true});
+  try {
+    transaction = await sequelize.transaction();
 
-  models.BettingLecture.destroy({
-    where: {
-      email: decodeURIComponent(req.cookies.user_email),
-      lecture_id: lecture_ids[6].dataValues.lecture_id,
-    }
-  });
-  res.redirect("/appliedLecture");
+    var lp = await models.BettingLecture.findOne({
+      where: {
+        email: decodeURIComponent(req.cookies.user_email),
+        lecture_id: lecture_ids[6].dataValues.lecture_id,
+      },
+      attributes: ['betting_points']
+    })
+
+    const capacity = await models.Lecture.findOne({
+      where: {
+        lecture_id: lecture_ids[6].dataValues.lecture_id
+      },
+      attributes: ['capacity']
+    })
+
+    models.User.update(
+      {points: Number(req.cookies.points)+Number(lp.dataValues.betting_points)},
+      {where: {email: decodeURIComponent(req.cookies.user_email)}}
+      );
+    res.cookie("points", Number(req.cookies.points)+Number(lp.dataValues.betting_points), {overwrite: true});
+
+    models.BettingLecture.destroy({
+      where: {
+        email: decodeURIComponent(req.cookies.user_email),
+        lecture_id: lecture_ids[6].dataValues.lecture_id,
+      }
+    });
+    models.Lecture.update(
+      {capacity: capacity.capacity + 1},
+      {where: {lecture_id: lecture_ids[6].dataValues.lecture_id}}
+      );
+    //트랜잭션 커밋
+    await transaction.commit();
+    res.redirect("/appliedLecture");
+  } catch (err) {
+    //트랜잭션 수행 중 오류 발생 시 롤백
+    if (transaction) await transaction.rollback();
+  }
 });
-
 app.post("/delete_lecture_" + lecture_ids[7].dataValues.lecture_id, async function(req,res) {
-  var lp = await models.BettingLecture.findOne({
-    where: {
-      email: decodeURIComponent(req.cookies.user_email),
-      lecture_id: lecture_ids[7].dataValues.lecture_id,
-    },
-    attributes: ['betting_points']
-  })
+  // 트랜잭션
+  let transaction;
 
-  models.User.update(
-    {points: Number(req.cookies.points)+Number(lp.dataValues.betting_points)},
-    {where: {email: decodeURIComponent(req.cookies.user_email)}}
-    );
-  res.cookie("points", Number(req.cookies.points)+Number(lp.dataValues.betting_points), {overwrite: true});
+  try {
+    transaction = await sequelize.transaction();
 
-  models.BettingLecture.destroy({
-    where: {
-      email: decodeURIComponent(req.cookies.user_email),
-      lecture_id: lecture_ids[7].dataValues.lecture_id,
-    }
-  });
-  res.redirect("/appliedLecture");
+    var lp = await models.BettingLecture.findOne({
+      where: {
+        email: decodeURIComponent(req.cookies.user_email),
+        lecture_id: lecture_ids[7].dataValues.lecture_id,
+      },
+      attributes: ['betting_points']
+    })
+
+    const capacity = await models.Lecture.findOne({
+      where: {
+        lecture_id: lecture_ids[7].dataValues.lecture_id
+      },
+      attributes: ['capacity']
+    })
+
+    models.User.update(
+      {points: Number(req.cookies.points)+Number(lp.dataValues.betting_points)},
+      {where: {email: decodeURIComponent(req.cookies.user_email)}}
+      );
+    res.cookie("points", Number(req.cookies.points)+Number(lp.dataValues.betting_points), {overwrite: true});
+
+    models.BettingLecture.destroy({
+      where: {
+        email: decodeURIComponent(req.cookies.user_email),
+        lecture_id: lecture_ids[7].dataValues.lecture_id,
+      }
+    });
+    models.Lecture.update(
+      {capacity: capacity.capacity + 1},
+      {where: {lecture_id: lecture_ids[7].dataValues.lecture_id}}
+      );
+    //트랜잭션 커밋
+    await transaction.commit();
+    res.redirect("/appliedLecture");
+  } catch (err) {
+    //트랜잭션 수행 중 오류 발생 시 롤백
+    if (transaction) await transaction.rollback();
+  }
 });
-
 app.post("/delete_lecture_" + lecture_ids[8].dataValues.lecture_id, async function(req,res) {
-  var lp = await models.BettingLecture.findOne({
-    where: {
-      email: decodeURIComponent(req.cookies.user_email),
-      lecture_id: lecture_ids[8].dataValues.lecture_id,
-    },
-    attributes: ['betting_points']
-  })
+  // 트랜잭션
+  let transaction;
 
-  models.User.update(
-    {points: Number(req.cookies.points)+Number(lp.dataValues.betting_points)},
-    {where: {email: decodeURIComponent(req.cookies.user_email)}}
-    );
-  res.cookie("points", Number(req.cookies.points)+Number(lp.dataValues.betting_points), {overwrite: true});
+  try {
+    transaction = await sequelize.transaction();
 
-  models.BettingLecture.destroy({
-    where: {
-      email: decodeURIComponent(req.cookies.user_email),
-      lecture_id: lecture_ids[8].dataValues.lecture_id,
-    }
-  });
-  res.redirect("/appliedLecture");
+    var lp = await models.BettingLecture.findOne({
+      where: {
+        email: decodeURIComponent(req.cookies.user_email),
+        lecture_id: lecture_ids[8].dataValues.lecture_id,
+      },
+      attributes: ['betting_points']
+    })
+
+    const capacity = await models.Lecture.findOne({
+      where: {
+        lecture_id: lecture_ids[8].dataValues.lecture_id
+      },
+      attributes: ['capacity']
+    })
+
+    models.User.update(
+      {points: Number(req.cookies.points)+Number(lp.dataValues.betting_points)},
+      {where: {email: decodeURIComponent(req.cookies.user_email)}}
+      );
+    res.cookie("points", Number(req.cookies.points)+Number(lp.dataValues.betting_points), {overwrite: true});
+
+    models.BettingLecture.destroy({
+      where: {
+        email: decodeURIComponent(req.cookies.user_email),
+        lecture_id: lecture_ids[8].dataValues.lecture_id,
+      }
+    });
+    models.Lecture.update(
+      {capacity: capacity.capacity + 1},
+      {where: {lecture_id: lecture_ids[8].dataValues.lecture_id}}
+      );
+    //트랜잭션 커밋
+    await transaction.commit();
+    res.redirect("/appliedLecture");
+  } catch (err) {
+    //트랜잭션 수행 중 오류 발생 시 롤백
+    if (transaction) await transaction.rollback();
+  }
 });
-
 app.post("/delete_lecture_" + lecture_ids[9].dataValues.lecture_id, async function(req,res) {
-  var lp = await models.BettingLecture.findOne({
-    where: {
-      email: decodeURIComponent(req.cookies.user_email),
-      lecture_id: lecture_ids[9].dataValues.lecture_id,
-    },
-    attributes: ['betting_points']
-  })
+  // 트랜잭션
+  let transaction;
 
-  models.User.update(
-    {points: Number(req.cookies.points)+Number(lp.dataValues.betting_points)},
-    {where: {email: decodeURIComponent(req.cookies.user_email)}}
-    );
-  res.cookie("points", Number(req.cookies.points)+Number(lp.dataValues.betting_points), {overwrite: true});
+  try {
+    transaction = await sequelize.transaction();
 
-  models.BettingLecture.destroy({
-    where: {
-      email: decodeURIComponent(req.cookies.user_email),
-      lecture_id: lecture_ids[9].dataValues.lecture_id,
-    }
-  });
-  res.redirect("/appliedLecture");
+    var lp = await models.BettingLecture.findOne({
+      where: {
+        email: decodeURIComponent(req.cookies.user_email),
+        lecture_id: lecture_ids[9].dataValues.lecture_id,
+      },
+      attributes: ['betting_points']
+    })
+
+    const capacity = await models.Lecture.findOne({
+      where: {
+        lecture_id: lecture_ids[9].dataValues.lecture_id
+      },
+      attributes: ['capacity']
+    })
+
+    models.User.update(
+      {points: Number(req.cookies.points)+Number(lp.dataValues.betting_points)},
+      {where: {email: decodeURIComponent(req.cookies.user_email)}}
+      );
+    res.cookie("points", Number(req.cookies.points)+Number(lp.dataValues.betting_points), {overwrite: true});
+
+    models.BettingLecture.destroy({
+      where: {
+        email: decodeURIComponent(req.cookies.user_email),
+        lecture_id: lecture_ids[9].dataValues.lecture_id,
+      }
+    });
+    models.Lecture.update(
+      {capacity: capacity.capacity + 1},
+      {where: {lecture_id: lecture_ids[9].dataValues.lecture_id}}
+      );
+    //트랜잭션 커밋
+    await transaction.commit();
+    res.redirect("/appliedLecture");
+  } catch (err) {
+    //트랜잭션 수행 중 오류 발생 시 롤백
+    if (transaction) await transaction.rollback();
+  }
 });
-
 app.post("/delete_lecture_" + lecture_ids[10].dataValues.lecture_id, async function(req,res) {
-  var lp = await models.BettingLecture.findOne({
-    where: {
-      email: decodeURIComponent(req.cookies.user_email),
-      lecture_id: lecture_ids[10].dataValues.lecture_id,
-    },
-    attributes: ['betting_points']
-  })
+  // 트랜잭션
+  let transaction;
 
-  models.User.update(
-    {points: Number(req.cookies.points)+Number(lp.dataValues.betting_points)},
-    {where: {email: decodeURIComponent(req.cookies.user_email)}}
-    );
-  res.cookie("points", Number(req.cookies.points)+Number(lp.dataValues.betting_points), {overwrite: true});
+  try {
+    transaction = await sequelize.transaction();
 
-  models.BettingLecture.destroy({
-    where: {
-      email: decodeURIComponent(req.cookies.user_email),
-      lecture_id: lecture_ids[10].dataValues.lecture_id,
-    }
-  });
-  res.redirect("/appliedLecture");
+    var lp = await models.BettingLecture.findOne({
+      where: {
+        email: decodeURIComponent(req.cookies.user_email),
+        lecture_id: lecture_ids[10].dataValues.lecture_id,
+      },
+      attributes: ['betting_points']
+    })
+
+    const capacity = await models.Lecture.findOne({
+      where: {
+        lecture_id: lecture_ids[10].dataValues.lecture_id
+      },
+      attributes: ['capacity']
+    })
+
+    models.User.update(
+      {points: Number(req.cookies.points)+Number(lp.dataValues.betting_points)},
+      {where: {email: decodeURIComponent(req.cookies.user_email)}}
+      );
+    res.cookie("points", Number(req.cookies.points)+Number(lp.dataValues.betting_points), {overwrite: true});
+
+    models.BettingLecture.destroy({
+      where: {
+        email: decodeURIComponent(req.cookies.user_email),
+        lecture_id: lecture_ids[10].dataValues.lecture_id,
+      }
+    });
+    models.Lecture.update(
+      {capacity: capacity.capacity + 1},
+      {where: {lecture_id: lecture_ids[10].dataValues.lecture_id}}
+      );
+    //트랜잭션 커밋
+    await transaction.commit();
+    res.redirect("/appliedLecture");
+  } catch (err) {
+    //트랜잭션 수행 중 오류 발생 시 롤백
+    if (transaction) await transaction.rollback();
+  }
 });
-
 app.post("/delete_lecture_" + lecture_ids[11].dataValues.lecture_id, async function(req,res) {
-  var lp = await models.BettingLecture.findOne({
-    where: {
-      email: decodeURIComponent(req.cookies.user_email),
-      lecture_id: lecture_ids[11].dataValues.lecture_id,
-    },
-    attributes: ['betting_points']
-  })
+  // 트랜잭션
+  let transaction;
 
-  models.User.update(
-    {points: Number(req.cookies.points)+Number(lp.dataValues.betting_points)},
-    {where: {email: decodeURIComponent(req.cookies.user_email)}}
-    );
-  res.cookie("points", Number(req.cookies.points)+Number(lp.dataValues.betting_points), {overwrite: true});
+  try {
+    transaction = await sequelize.transaction();
 
-  models.BettingLecture.destroy({
-    where: {
-      email: decodeURIComponent(req.cookies.user_email),
-      lecture_id: lecture_ids[11].dataValues.lecture_id,
-    }
-  });
-  res.redirect("/appliedLecture");
+    var lp = await models.BettingLecture.findOne({
+      where: {
+        email: decodeURIComponent(req.cookies.user_email),
+        lecture_id: lecture_ids[11].dataValues.lecture_id,
+      },
+      attributes: ['betting_points']
+    })
+
+    const capacity = await models.Lecture.findOne({
+      where: {
+        lecture_id: lecture_ids[11].dataValues.lecture_id
+      },
+      attributes: ['capacity']
+    })
+
+    models.User.update(
+      {points: Number(req.cookies.points)+Number(lp.dataValues.betting_points)},
+      {where: {email: decodeURIComponent(req.cookies.user_email)}}
+      );
+    res.cookie("points", Number(req.cookies.points)+Number(lp.dataValues.betting_points), {overwrite: true});
+
+    models.BettingLecture.destroy({
+      where: {
+        email: decodeURIComponent(req.cookies.user_email),
+        lecture_id: lecture_ids[11].dataValues.lecture_id,
+      }
+    });
+    models.Lecture.update(
+      {capacity: capacity.capacity + 1},
+      {where: {lecture_id: lecture_ids[11].dataValues.lecture_id}}
+      );
+    //트랜잭션 커밋
+    await transaction.commit();
+    res.redirect("/appliedLecture");
+  } catch (err) {
+    //트랜잭션 수행 중 오류 발생 시 롤백
+    if (transaction) await transaction.rollback();
+  }
+});
+app.post("/delete_lecture_" + lecture_ids[12].dataValues.lecture_id, async function(req,res) {
+  // 트랜잭션
+  let transaction;
+
+  try {
+    transaction = await sequelize.transaction();
+
+    var lp = await models.BettingLecture.findOne({
+      where: {
+        email: decodeURIComponent(req.cookies.user_email),
+        lecture_id: lecture_ids[12].dataValues.lecture_id,
+      },
+      attributes: ['betting_points']
+    })
+
+    const capacity = await models.Lecture.findOne({
+      where: {
+        lecture_id: lecture_ids[12].dataValues.lecture_id
+      },
+      attributes: ['capacity']
+    })
+
+    models.User.update(
+      {points: Number(req.cookies.points)+Number(lp.dataValues.betting_points)},
+      {where: {email: decodeURIComponent(req.cookies.user_email)}}
+      );
+    res.cookie("points", Number(req.cookies.points)+Number(lp.dataValues.betting_points), {overwrite: true});
+
+    models.BettingLecture.destroy({
+      where: {
+        email: decodeURIComponent(req.cookies.user_email),
+        lecture_id: lecture_ids[12].dataValues.lecture_id,
+      }
+    });
+    models.Lecture.update(
+      {capacity: capacity.capacity + 1},
+      {where: {lecture_id: lecture_ids[12].dataValues.lecture_id}}
+      );
+    //트랜잭션 커밋
+    await transaction.commit();
+    res.redirect("/appliedLecture");
+  } catch (err) {
+    //트랜잭션 수행 중 오류 발생 시 롤백
+    if (transaction) await transaction.rollback();
+  }
 });
 }
